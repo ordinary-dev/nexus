@@ -2,52 +2,9 @@ const std = @import("std");
 const config = @import("config.zig");
 const Writer = std.Io.Writer;
 
-const template_start =
-    \\<!DOCTYPE html>
-    \\<html>
-    \\<head>
-    \\  <meta charset="utf-8" />
-    \\  <meta name="viewport" content="width=device-width, initial-scale=1" />
-    \\  <title>{s}</title>
-    \\  <style>
-    \\    {s}
-    \\  </style>
-    \\  <link rel="icon" type="image/svg+xml" href="{s}" />
-    \\  <script>
-    \\    {s}
-    \\  </script>
-    \\</head>
-    \\<body>
-    \\  <input type="text" id="search" placeholder="Search (/)" />
-    \\  <div class="groups">
-    \\
-;
-
-const group_start =
-    \\    <section>
-    \\      <b>{s}</b>
-    \\
-;
-
-const link_template =
-    \\      <a href="{s}" target="_blank" rel="noreferer">{s}</a>
-    \\
-;
-
-const group_end =
-    \\    </section>
-    \\
-;
-
-const template_end =
-    \\  </div>
-    \\</body>
-    \\</html>
-    \\
-;
-
 const favicon_format = "data:image/svg+xml;base64,{s}";
 
+const html = @embedFile("static/index.html");
 const style = @embedFile("static/style.css");
 const script = @embedFile("static/script.js");
 const favicon = @embedFile("static/favicon.svg");
@@ -57,17 +14,25 @@ pub fn generateHTML(cfg: config.Config, writer: *Writer) !void {
     comptime var favicon_href: [favicon_buf_size]u8 = undefined;
     comptime try faviconHref(&favicon_href);
 
-    try writer.print(template_start, .{ cfg.title, style, favicon_href, script });
+    // Split HTML template.
+    const template_start_fmt = comptime strFromTo(html, "<!-- start -->", "<!-- group-start -->").?;
+    const group_start_fmt = comptime strFromTo(html, "<!-- group-start -->", "<!-- link-start -->").?;
+    const link_fmt = comptime strFromTo(html, "<!-- link-start -->", "<!-- link-end -->").?;
+    const group_end_fmt = comptime strFromTo(html, "<!-- link-end -->", "<!-- group-end -->").?;
+    const template_end_fmt = comptime strFromTo(html, "<!-- group-end -->", "<!-- end -->").?;
+
+    try writer.print(template_start_fmt, .{ cfg.title, style, favicon_href, script });
+
     for (cfg.groups) |group| {
-        try writer.print(group_start, .{group.name});
+        try writer.print(group_start_fmt, .{group.name});
 
         for (group.links) |link| {
-            try writer.print(link_template, .{ link.url, link.name });
+            try writer.print(link_fmt, .{ link.url, link.name });
         }
 
-        try writer.print(group_end, .{});
+        try writer.print(group_end_fmt, .{});
     }
-    _ = try writer.write(template_end);
+    _ = try writer.write(template_end_fmt);
     try writer.flush();
 }
 
@@ -85,4 +50,13 @@ fn faviconHref(buffer: []u8) !void {
     _ = b64.encode(&favicon_b64, favicon);
 
     _ = try std.fmt.bufPrint(buffer, favicon_format, .{favicon_b64});
+}
+
+// Extract substring between "from" and "to".
+fn strFromTo(src: []const u8, from: []const u8, to: []const u8) ?[]const u8 {
+    const start_idx = std.mem.indexOf(u8, src, from).?;
+    const end_idx = std.mem.indexOf(u8, src, to).?;
+    if (start_idx >= end_idx) return null;
+
+    return src[start_idx + from.len .. end_idx];
 }
