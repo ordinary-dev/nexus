@@ -1,6 +1,6 @@
 .{
     .name = .nexus,
-    .version = "0.0.1",
+    .version = "0.0.2",
     .fingerprint = 0x2d7eaddd4a4e4118, // Changing this has security and trust implications.
     .minimum_zig_version = "0.15.2",
     .dependencies = .{
