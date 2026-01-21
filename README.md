@@ -4,7 +4,7 @@
 
 ## Getting started
 
-1. Download the executable or [build from source](docs/BUILDING.md).
+1. [Download the executable](https://github.com/ordinary-dev/nexus/releases/latest) or [build from source](docs/BUILDING.md).
 2. Edit .yaml file with links (see [LINKS.yaml](LINKS.yaml)).
 3. Generate your homepage.
 
