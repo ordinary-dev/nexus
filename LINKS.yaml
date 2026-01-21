@@ -1,0 +1,32 @@
+title: My Homepage
+groups:
+  - name: Development
+    links:
+      - name: Github
+        url: https://github.com
+      - name: Advent of Code
+        url: https://adventofcode.com/
+      - name: Learn OpenGL
+        url: https://learnopengl.com/
+      - name: Vulkan Guide
+        url: https://vkguide.dev/
+  - name: Search
+    links:
+      - name: Google
+        url: https://google.com
+      - name: Wiby
+        url: https://wiby.me/
+      - name: Kagi
+        url: https://kagi.com/
+  - name: Self-hosted
+    links:
+      - name: Mastodon
+        url: https://joinmastodon.org/
+      - name: Forgejo
+        url: https://forgejo.org/
+      - name: Grafana
+        url: https://grafana.com/
+      - name: XMPP
+        url: https://xmpp.org/
+      - name: Land Chad
+        url: https://landchad.net/
