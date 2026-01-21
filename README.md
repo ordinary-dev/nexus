@@ -1,5 +1,6 @@
 # Nexus - Browser homepage generator
 
+![Screenshot](docs/screenshot-1.avif)
 
 ## Getting started
 
