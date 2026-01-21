@@ -24,6 +24,7 @@ pub fn build(b: *std.Build) void {
                 .{ .name = "nexus", .module = mod },
                 .{ .name = "yaml", .module = yaml.module("yaml") },
             },
+            .strip = optimize != .Debug,
         }),
     });
 
